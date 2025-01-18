@@ -54,8 +54,12 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     // Google sign in sdk dependency must use () and ""
-    implementation("com.google.android.gms:play-services-auth:20.5.0")
-
+    implementation(libs.play.services.auth)
+    // adding the dependency for the Recycle view
+    implementation(libs.androidx.recyclerview)
+    // adding card view dependency
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.camera.core)
     //testing dependency
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -64,4 +68,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //camera dependecy
+    implementation(libs.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
 }

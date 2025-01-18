@@ -3,4 +3,9 @@
     <!--    <string name="app_name">GfG | Button In Kotlin</string>-->
     <string name="btn">Treasure Hunt</string>
     <string name="message">Start treasuring hunting!</string>
+    <string name="item_name">Item Name</string>
+
+    <string name="tomatoes">Tomatoes</string>
+
+
 </resources>

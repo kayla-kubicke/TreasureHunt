@@ -6,6 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+
+<!--    this will help enable the list-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:scrollbars="vertical"
+        tools:layout_editor_absoluteX="194dp"
+        tools:layout_editor_absoluteY="179dp" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
