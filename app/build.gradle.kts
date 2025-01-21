@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -68,9 +69,19 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    //camera dependecy
-    implementation(libs.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
+    //camera x dependecy
+    // CameraX core library
+    implementation(libs.androidx.camera.core.v150apha05)
+    implementation(libs.androidx.camera.lifecycle.v150aplha05)
+    implementation(libs.androidx.camera.view.v150alpha05)
+    implementation(libs.androidx.camera.extensions.v150alpha05) // Compatible version
+    implementation(libs.androidx.camera.camera2.v150alpha05)
+
+    implementation(libs.androidx.core.ktx.v1100)
+    implementation(libs.androidx.appcompat.v170)
+
+    //api dependency
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
 }

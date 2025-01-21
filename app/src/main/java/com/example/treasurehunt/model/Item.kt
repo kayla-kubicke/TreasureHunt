@@ -1,4 +1,4 @@
-//package com.example.treasurehunt.model
+package com.example.treasurehunt.model
 //
 //class Item(name: String?, imageResId: Int) {
 //    val name: String = getName()
@@ -13,9 +13,20 @@
 //    }
 //
 //}
-package com.example.treasurehunt.model
+//package com.example.treasurehunt.model
+//
+//data class Item(
+//    val name: String,
+//    val imageResId: Int
+//)
 
+//made parcable
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Item(
     val name: String,
     val imageResId: Int
-)
+) : Parcelable
+

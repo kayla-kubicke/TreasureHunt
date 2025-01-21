@@ -6,6 +6,8 @@
     <string name="item_name">Item Name</string>
 
     <string name="tomatoes">Tomatoes</string>
+    <string name="title_activity_game_setting">GameSettingActivity</string>
+    <string name="title_activity_hunting">HuntingActivity</string>
 
 
 </resources>
