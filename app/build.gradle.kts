@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
+   // id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -83,5 +85,15 @@ dependencies {
     //api dependency
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-
+//    implementation(libs.google.cloud.vision)
+//    implementation(libs.gson)
+   //firebase bom dependency
+   // implementation(platform(libs.firebase.bom))
+    implementation(platform(libs.firebase.bom))
+    //firebase dependency
+    // ML Kit image labeling
+    implementation(libs.image.labeling)
+    implementation(libs.firebase.analytics)
+// If you need custom models for labeling
+    implementation(libs.image.labeling.custom)
 }
