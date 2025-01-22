@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
    // id("com.android.application")
-    id("com.google.gms.google-services")
+   // id("com.google.gms.google-services")
 }
 
 android {
@@ -63,6 +63,7 @@ dependencies {
     // adding card view dependency
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.camera.core)
+  //  implementation(libs.com.google.firebase.firebase.ml.vision)
     //testing dependency
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -94,6 +95,9 @@ dependencies {
     // ML Kit image labeling
     implementation(libs.image.labeling)
     implementation(libs.firebase.analytics)
-// If you need custom models for labeling
-    implementation(libs.image.labeling.custom)
+    implementation (libs.mlkit.image.labeling.v1707)
+
+//    implementation(libs.play.services.basement)
+//    implementation(libs.play.services.base)
+
 }

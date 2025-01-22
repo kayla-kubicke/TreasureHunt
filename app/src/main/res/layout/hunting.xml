@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- Camera Preview -->
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/captureButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
 
-    <!-- Capture Button -->
-    <Button
-        android:id="@+id/captureButton"
-        android:layout_width="wrap_content"
+    <!-- Buttons container -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Capture"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-    <Button
-        android:id="@+id/loadImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Load Image"
-        android:layout_below="@id/startHuntingButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Load Image Button -->
+        <Button
+            android:id="@+id/loadImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Load Image" />
+
+        <!-- Capture Button -->
+        <Button
+            android:id="@+id/captureButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Capture" />
+
+    </LinearLayout>
+
+</RelativeLayout>
+
 
 

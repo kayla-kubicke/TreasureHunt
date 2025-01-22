@@ -22,6 +22,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 
 import java.io.FileOutputStream
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.label.ImageLabeling
+import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 
 class HuntingActivity : AppCompatActivity() {
 
@@ -39,17 +42,16 @@ class HuntingActivity : AppCompatActivity() {
 
         val loadImageButton = findViewById<Button>(R.id.loadImageButton)
         loadImageButton.setOnClickListener {
-            // Load image from resources
-            val bitmap = getImageFromResources(R.drawable.tomatoes_image) // Replace with your drawable ID
-            val file = bitmapToFile(bitmap)
-            sendPhotoToApi(file)
+            val bitmap = getImageFromResources(R.drawable.tomatoes_image) // Load the image
+            analyzeImageWithMLKit(bitmap) // Analyze the loaded image
         }
 
-        val captureButton = findViewById<Button>(R.id.captureButton)
-        captureButton.setOnClickListener {
-            capturePhoto()
-        }
+//        val captureButton = findViewById<Button>(R.id.captureButton)
+//        captureButton.setOnClickListener {
+//            capturePhoto()
+//        }
     }
+
     private fun checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
@@ -81,66 +83,82 @@ class HuntingActivity : AppCompatActivity() {
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
+            // Set up the preview use case
             val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
-
-//                it.setSurfaceProvider(previewView.surfaceProvider)
+                it.surfaceProvider =
+                    previewView.surfaceProvider  // Ensure `previewView` is initialized
             }
 
-            imageCapture = ImageCapture.Builder().build()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            // Initialize ImageCapture
+            imageCapture = ImageCapture.Builder().build() // This is crucial!
 
             try {
+                // Bind use cases to the camera
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
+                    this,
+                    CameraSelector.DEFAULT_BACK_CAMERA, // Choose the back camera
+                    preview,
+                    imageCapture // Bind `imageCapture` here
                 )
             } catch (exc: Exception) {
-                Log.e("HuntingActivity", "Camera binding failed: ${exc.message}")
-                Toast.makeText(this, "Failed to bind camera use cases", Toast.LENGTH_SHORT).show()
+                Log.e("CameraX", "Use case binding failed", exc)
             }
         }, ContextCompat.getMainExecutor(this))
     }
 
 
-    private fun capturePhoto() {
-        val photoFile = File(
-            cacheDir,
-            "${System.currentTimeMillis()}.jpg"
-        )
+//    private fun capturePhoto() {
+//        val photoFile = File(
+//            cacheDir,
+//            "${System.currentTimeMillis()}.jpg"
+//        )
+//
+//        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+//
+//        imageCapture.takePicture(
+//            outputOptions,
+//            ContextCompat.getMainExecutor(this),
+//            object : ImageCapture.OnImageSavedCallback {
+//                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+//                    // Once photo is saved, send it to the API
+//                    sendPhotoToApi(photoFile)
+//                }
+//
+//                override fun onError(exc: ImageCaptureException) {
+//                    Toast.makeText(
+//                        this@HuntingActivity,
+//                        "Photo capture failed: ${exc.message}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    Log.d("HuntingActivity", "Photo capture failed: ${exc.message}")
+//                }
+//            }
+//        )
+//    }
 
-        val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+    private fun analyzeImageWithMLKit(bitmap: Bitmap) {
+        val inputImage = InputImage.fromBitmap(bitmap, 0)
+        val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
 
-        imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    // Once photo is saved, send it to the API
-                    sendPhotoToApi(photoFile)
-                }
-
-                override fun onError(exc: ImageCaptureException) {
-                    Toast.makeText(this@HuntingActivity, "Photo capture failed: ${exc.message}", Toast.LENGTH_SHORT).show()
-                    Log.d("HuntingActivity", "Photo capture failed: ${exc.message}")
+        labeler.process(inputImage)
+            .addOnSuccessListener { labels ->
+                // Iterate through the labels returned by ML Kit
+                for (label in labels) {
+                    val text = label.text // Label text, e.g., "Tomato"
+                    val confidence = label.confidence // Confidence score
+                    Log.d("MLKit", "Label: $text, Confidence: $confidence")
                 }
             }
-        )
+            .addOnFailureListener { e ->
+                Log.e("MLKit", "Image labeling failed: ${e.message}")
+            }
     }
-
 
     private fun getImageFromResources(resourceId: Int): Bitmap {
-        return BitmapFactory.decodeResource(resources,R.drawable.tomatoes_image)
+        return BitmapFactory.decodeResource(resources, R.drawable.tomatoes_image)
     }
-    // Function to convert Bitmap to File
-//    private fun bitmapToFile(bitmap: Bitmap, fileName: String): File {
-//        val file = File(cacheDir, fileName)
-//        val outputStream = FileOutputStream(file)
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-//        outputStream.flush()
-//        outputStream.close()
-//        return file
-//    }
+
     private fun bitmapToFile(bitmap: Bitmap): File {
         val file = File(cacheDir, "tomatoes_image.jpg")
         val outputStream = FileOutputStream(file)
@@ -149,94 +167,53 @@ class HuntingActivity : AppCompatActivity() {
         outputStream.close()
         return file
     }
+
+
 //    private fun sendPhotoToApi(photoFile: File) {
 //        // Create a RequestBody with the file
 //        val requestBody = photoFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
-//        val multipartBodyPart = MultipartBody.Part.createFormData(
-//            "file", // The parameter name expected by the API
-//            photoFile.name,
-//            requestBody
-//        )
 //
-//        // Create a MultipartBody containing the part
+//        // Create a MultipartBody with the file
 //        val multipartBody = MultipartBody.Builder()
 //            .setType(MultipartBody.FORM)
-//            .addPart(multipartBodyPart)
+//            .addFormDataPart(
+//                "file", // The parameter name expected by the API
+//                photoFile.name,
+//                requestBody
+//            )
 //            .build()
 //
-//        // Use the MultipartBody with the Request.Builder
+//        // Use OkHttp to send the request
 //        val client = OkHttpClient()
 //        val request = Request.Builder()
 //            .url("https://your-api-endpoint.com/analyze") // Replace with your API URL
-//            .post(multipartBody) // Use the MultipartBody here
+//            .post(multipartBody) // Pass the multipart body
 //            .build()
 //
 //        client.newCall(request).enqueue(object : Callback {
 //            override fun onFailure(call: Call, e: IOException) {
 //                runOnUiThread {
 //                    Toast.makeText(this@HuntingActivity, "Failed to send photo: ${e.message}", Toast.LENGTH_SHORT).show()
+//                    Log.e("API_RESPONSE", "Error: ${e.message}")
 //                }
 //            }
 //
 //            override fun onResponse(call: Call, response: Response) {
-//                if (response.isSuccessful) {
-//                    runOnUiThread {
-//                        Toast.makeText(this@HuntingActivity, "Photo sent successfully", Toast.LENGTH_SHORT).show()
-//                    }
-//                } else {
-//                    runOnUiThread {
+//                runOnUiThread {
+//                    if (response.isSuccessful) {
+//                        val responseBody = response.body?.string() // Get the response body
+//                        Toast.makeText(this@HuntingActivity, "Photo sent successfully: $responseBody", Toast.LENGTH_SHORT).show()
+//                        Log.d("API_RESPONSE", "Success: $responseBody")
+//                    } else {
 //                        Toast.makeText(this@HuntingActivity, "Failed to analyze photo: ${response.message}", Toast.LENGTH_SHORT).show()
+//                        Log.e("API_RESPONSE", "Failure: ${response.code} - ${response.message}")
 //                    }
 //                }
 //            }
 //        })
-//    }
-private fun sendPhotoToApi(photoFile: File) {
-    // Create a RequestBody with the file
-    val requestBody = photoFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
-
-    // Create a MultipartBody with the file
-    val multipartBody = MultipartBody.Builder()
-        .setType(MultipartBody.FORM)
-        .addFormDataPart(
-            "file", // The parameter name expected by the API
-            photoFile.name,
-            requestBody
-        )
-        .build()
-
-    // Use OkHttp to send the request
-    val client = OkHttpClient()
-    val request = Request.Builder()
-        .url("https://your-api-endpoint.com/analyze") // Replace with your API URL
-        .post(multipartBody) // Pass the multipart body
-        .build()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            runOnUiThread {
-                Toast.makeText(this@HuntingActivity, "Failed to send photo: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            if (response.isSuccessful) {
-                val responseBody = response.body?.string()
-                Log.d("API_RESPONSE", "Success: $responseBody")
-                runOnUiThread {
-                    Toast.makeText(this@HuntingActivity, "Photo sent successfully: $responseBody", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Log.e("API_RESPONSE", "Failure: ${response.code} - ${response.message}")
-                runOnUiThread {
-                    Toast.makeText(this@HuntingActivity, "Failed to analyze photo: ${response.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    })
+    // }
 }
 
 
-}
 
 
