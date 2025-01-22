@@ -42,9 +42,14 @@ import com.example.treasurehunt.model.Item // Import the Item class
 //}
 class ItemAdapter(
     private val context: Context,
-    private val itemList: List<Item>,
+    private var itemList: List<Item>,
     private val itemClickListener: (Item) -> Unit
 ) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+
+    fun updateData(newItemList: List<Item>) {
+        itemList = newItemList
+        notifyDataSetChanged() // Notify the adapter to refresh the UI
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val itemView = LayoutInflater.from(context).inflate(R.layout.grid_item, parent, false)

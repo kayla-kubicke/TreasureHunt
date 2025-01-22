@@ -8,11 +8,24 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_alignParentTop="true"
+        android:layout_above="@id/hintsContainer" />
 
-    <!-- Buttons container -->
+    <!-- Hints Container -->
     <LinearLayout
+        android:id="@+id/hintsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttonsContainer"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@android:color/white" />
+
+    <!-- Buttons Container -->
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -34,10 +47,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Capture" />
-
     </LinearLayout>
 
 </RelativeLayout>
+
+
 
 
 

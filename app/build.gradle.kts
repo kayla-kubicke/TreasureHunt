@@ -86,18 +86,12 @@ dependencies {
     //api dependency
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-//    implementation(libs.google.cloud.vision)
-//    implementation(libs.gson)
-   //firebase bom dependency
-   // implementation(platform(libs.firebase.bom))
+
     implementation(platform(libs.firebase.bom))
     //firebase dependency
     // ML Kit image labeling
     implementation(libs.image.labeling)
     implementation(libs.firebase.analytics)
     implementation (libs.mlkit.image.labeling.v1707)
-
-//    implementation(libs.play.services.basement)
-//    implementation(libs.play.services.base)
 
 }

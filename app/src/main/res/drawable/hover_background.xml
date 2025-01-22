@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <selector xmlns:android="http://schemas.android.com/apk/res/android">
+        <!-- Hover state -->
+        <item android:state_hovered="true">
+            <shape android:shape="rectangle">
+                <solid android:color="#FFDDDD" /> <!-- Hover background color -->
+                <corners android:radius="16dp" /> <!-- Rounded corners -->
+            </shape>
+        </item>
+
+        <!-- Normal state -->
+        <item>
+            <shape android:shape="rectangle">
+                <solid android:color="@android:color/transparent" /> <!-- Default background color -->
+                <corners android:radius="16dp" />
+            </shape>
+        </item>
+    </selector>
